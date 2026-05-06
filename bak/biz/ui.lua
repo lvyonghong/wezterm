@@ -35,14 +35,14 @@ wezterm.on('update-status', function(window, pane)
 
     -- Color palette for the backgrounds of each cell
     local colors = {
-        '#3c1361',
-        '#52307c',
-        '#663a82',
-        '#7c5295',
-        '#b491c8',
+        '#3C1361',
+        '#52307C',
+        '#663A82',
+        '#7C5295',
+        '#B491C8',
     }
     -- Foreground color for the text across the fade
-    local text_fg = '#c0c0c0'
+    local text_fg = '#C0C0C0'
     -- The elements to be formatted
     local elements = {}
     -- How many cells have been formatted
@@ -73,9 +73,9 @@ return {
     color_scheme = "OLEDppuccin",
     -- 自定义配色
     colors = {
-        cursor_bg = '#c8c093',
-        cursor_fg = '#c8c093',
-        cursor_border = '#c8c093',
+        cursor_bg = '#C8C093',
+        cursor_fg = '#C8C093',
+        cursor_border = '#C8C093',
         scrollbar_thumb = '#444444',
         split = '#233222',
     },
@@ -97,8 +97,8 @@ return {
     tab_and_split_indices_are_zero_based = false,
     enable_scroll_bar = true,
     window_frame = {
-        inactive_titlebar_bg = '#353535',
-        active_titlebar_bg = '#2b2042',
+        inactive_titlebar_bg = '#2B2042',
+        active_titlebar_bg = '#2B2042',
     },
     inactive_pane_hsb = {
         saturation = 0.8,

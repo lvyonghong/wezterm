@@ -1,7 +1,7 @@
 local wezterm = require 'wezterm'
 
 local format_title = function(title, is_active, max_width)
-    local background = { Background = { Color = '#1f1f28' } }
+    local background = { Background = { Color = '#1F1F28' } }
     local title_len = #title
     local pad_len = math.floor((max_width - title_len) / 2)
 
@@ -9,9 +9,9 @@ local format_title = function(title, is_active, max_width)
         Text = string.rep(' ', pad_len) .. title .. string.rep(' ', pad_len)
     }
     if is_active then
-        return { background = { Color = '#666666'}, { Foreground = { Color = '#cc33f5' } }, formatted_title }
+        return { background = { Color = '#666666'}, { Foreground = { Color = '#BA55D3' } }, formatted_title }
     else
-        return { background, { Foreground = { Color = '#957fb8' } }, formatted_title }
+        return { background, { Foreground = { Color = '#957FB8' } }, formatted_title }
     end
 end
 

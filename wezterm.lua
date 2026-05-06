@@ -1,15 +1,24 @@
-local utils = require 'utils'
+local Config = require('config')
 
-local startup = require 'startup'
-local keys = require 'keys'
-local ui = require 'ui'
-local title = require 'title'
+require('utils.backdrops')
+   -- :set_images_dir(require('wezterm').home_dir .. '/Pictures/Wallpapers/')
+   :scan_images_dir()
+   :random()
 
-local other_opts = {
-    use_ime = true,
-    check_for_updates = true,
-    check_for_updates_interval_seconds = 7 * 24 * 60 * 60,
-    use_dead_keys = false,
-    scrollback_lines = 1000000
-}
-return utils.merge({ other_opts, startup, keys, ui, title })
+require('events.left-status').setup()
+require('events.right-status').setup({ date_format = '%a %H:%M:%S' })
+require('events.tab-title').setup({
+   hide_active_tab_unseen = true,
+   unseen_icon = 'numbered_box',
+   show_progress = true,
+})
+require('events.new-tab-button').setup()
+require('events.gui-startup').setup()
+
+return Config:init()
+   :append(require('config.appearance'))
+   :append(require('config.bindings'))
+   :append(require('config.domains'))
+   :append(require('config.fonts'))
+   :append(require('config.general'))
+   :append(require('config.launch')).options
