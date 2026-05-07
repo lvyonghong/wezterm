@@ -9,7 +9,7 @@ function M.apply(config)
         { family = 'JetBrainsMono Nerd Font Mono', weight = 'DemiBold', scale = 1.0 },
         { family = 'JetBrains Mono',               weight = 'DemiBold' }
     }
-    config.font_size = platform.is_mac and 13 or 14
+    config.font_size = 13 or 14
 end
 
 return M

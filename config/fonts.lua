@@ -3,16 +3,21 @@ local platform = require('utils.platform')
 
 -- local font_family = 'Maple Mono NF'
 local font_family = 'JetBrainsMono Nerd Font'
+local font_family_mono = 'JetBrainsMono Nerd Font Mono'
 -- local font_family = 'CartographCF Nerd Font'
 
-local font_size = platform.is_mac and 13 or 14 or 9.75
+local font_size = platform.is_mac and 14 or 13 or 9.75
 
 ---@type Config
 return {
-   font = wezterm.font({ family = font_family, weight = 'Medium' }),
-   font_size = font_size,
+    font = wezterm.font_with_fallback {
+        { family = font_family_mono, weight = 'Medium' },
+        { family = font_family,      weight = 'Medium' },
+        'Noto Color Emoji',
+    },
+    font_size = font_size,
 
-   --ref: https://wezfurlong.org/wezterm/config/lua/config/freetype_pcf_long_family_names.html#why-doesnt-wezterm-use-the-distro-freetype-or-match-its-configuration
-   freetype_load_target = 'Normal', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'
-   freetype_render_target = 'Normal', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'
+    --ref: https://wezfurlong.org/wezterm/config/lua/config/freetype_pcf_long_family_names.html#why-doesnt-wezterm-use-the-distro-freetype-or-match-its-configuration
+    freetype_load_target = 'Normal', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'
+    freetype_render_target = 'Normal', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'
 }
