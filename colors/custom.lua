@@ -38,14 +38,14 @@ local colorscheme = {
     selection_bg = mocha.surface2,
     selection_fg = mocha.text,
     ansi = {
-        '#0C0C0C', -- black
+        '#0C0C0C',  -- black
         'FFFA3E4E', -- red
-        '#13A10E', -- green
-        '#C19C00', -- yellow
+        '#13A10E',  -- green
+        '#C19C00',  -- yellow
         'FF6699EA', -- blue
-        '#881798', -- magenta/purple
+        '#881798',  -- magenta/purple
         'FF66EFCA', -- cyan
-        '#CCCCCC', -- white
+        '#CCCCCC',  -- white
     },
     brights = {
         '#767676', -- black
