@@ -1,34 +1,53 @@
 # AGENTS.md
 
 ## Repo type
-WezTerm terminal emulator configuration. No build, test, or lint commands.
+WezTerm terminal emulator configuration for a local iMac. No build, test, or lint commands.
 
 ## Active config
-Only `wezterm.lua` (root) is loaded by WezTerm. It uses `config_builder()` and requires modules from `config/` in a defined order (see `modules` table at line 12). Each module exports an `apply(config)` function.
+`wezterm.lua` is the sole entrypoint. It uses a custom `Config` builder class (`config/init.lua`) — **not** `config_builder()`.
 
-## Legacy/biz config
-`biz/wezterm.lua` is an older alternative config (returns a plain table, not config_builder). It is **not** loaded by the root config. The `biz/` directory is only relevant if this config is used standalone on another machine.
+## Config module loading
+Config modules are chained in `wezterm.lua:18-24`:
+`appearance` → `bindings` → `domains` → `fonts` → `general` → `launch`
 
-## Module loading order
-Defined in `wezterm.lua:12-27`. Order matters — later modules can override earlier ones. `config.background` is commented out by default; uncomment to enable wallpaper rotation.
+Each module returns a plain table. `Config:append()` **warns and skips duplicate keys** — later modules cannot override earlier ones.
 
-## Sensitive data
-`config/ssh_domains.lua` contains real IPs and usernames. Do not commit sensitive changes there.
+## Event modules
+Modules in `events/` follow a `setup(opts?)` pattern, registering `wezterm.on(...)` handlers via side effects. They load in `wezterm.lua:8-16`, **before** config modules.
 
-## Fonts
-`fonts/` is empty. The config uses system-installed `JetBrainsMono Nerd Font Mono`. The commented-out `font_dirs` / `font_locator` lines in `config/fonts.lua:8-9` show how to bundle fonts for portability.
+## Backdrops singleton
+`utils/backdrops.lua` is a singleton. It eagerly scans `backdrops/` for images and picks a random backdrop on config load. Methods like `:cycle_forward()`, `:toggle_focus()` mutate the singleton internally.
 
-## Image directory
-`images/` contains wallpaper files (`.jpg`) used by `config/background.lua` for background rotation (disabled by default).
+## Platform detection
+`utils/platform.lua` exposes `is_mac`, `is_win`, `is_linux` derived from `wezterm.target_triple`. Used by bindings, domains, fonts, and launch config.
 
-## Platform-aware behavior
-`config/shell.lua` and `config/utils.lua` detect Windows vs Unix to select default shell and check for commands. The repo is used cross-platform.
+## Shell
+Default shell on macOS is `/usr/local/bin/fish -l` (`config/launch.lua:10`). Launch menu includes Fish, Zsh, and Bash.
 
-## Config resolution
-`config/constants.lua` exposes `CONFIG_DIR` as `wezterm.config_dir` (runtime path). Use this for referencing files relative to the config directory.
+## Bindings convention
+- On **macOS**: `mod.SUPER = CMD`, `mod.SUPER_REV = CMD|CTRL`
+- On **Win/Linux**: `mod.SUPER = ALT`, `mod.SUPER_REV = ALT|CTRL`
+- Leader key: `F12`
+- Default keybindings are **disabled** (`disable_default_key_bindings = true`)
 
-## Event handlers
-Some modules register global `wezterm.on(...)` handlers (`config/events.lua`, `config/tab_bar.lua`, `biz/title.lua`, `biz/startup.lua`). These register at module load time and persist regardless of config reloads.
+## Tab/status bar rendering
+`utils/cells.lua` is a FormatItem builder for `wezterm.format()`. Used by all four tab/status-bar event modules.
 
-## Other
-`biz` 目录下的配置是另外一种配置方式，在这里仅作为参考，供主配置文件参考使用。
+## Progress indicators
+`events/tab-title.lua` progress icons require WezTerm nightly ≥ version `20250209`. Older versions get `show_progress` hard-set to `false`.
+
+## Color scheme
+`colors/custom.lua` is a catppuccin mocha variant. Used by both `config/appearance.lua` and `utils/backdrops.lua`.
+
+## Domains
+`config/domains.lua` defines `ssh_domains`, `unix_domains`, `wsl_domains`. Only populated on **Windows** — empty on macOS.
+
+## Key libraries
+| File | Purpose |
+|---|---|
+| `utils/cells.lua` | FormatItem builder for `wezterm.format()` |
+| `utils/opts-validator.lua` | Schema-based option validation |
+| `utils/gpu-adapter.lua` | GPU enumeration + scoring for `webgpu_preferred_adapter` |
+| `utils/platform.lua` | Platform detection singleton |
+| `utils/math.lua` | `clamp`, `round` |
+| `utils/str.lua` | `starts_with`, `ends_with` |
