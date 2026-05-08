@@ -41,6 +41,9 @@ local keys = {
             },
         },
     },
+    -- CMD + z 发送 Ctrl+_ 实现撤销
+    { key = 'z', mods = mod.SUPER, action = act.SendKey{ key = '_', mods = 'CTRL' } },
+
     -- CMD+CTRL+u: 快速选择并打开屏幕上匹配的 URL
     {
         key = 'u',
@@ -160,8 +163,8 @@ local keys = {
     { key = [[\]],      mods = mod.SUPER_REV, action = act.SplitHorizontal({ domain = 'CurrentPaneDomain' }) },
 
     -- panes: zoom+close pane
-    -- CMD+Enter: 切换当前窗格缩放 (放大/还原)
-    { key = 'Enter',    mods = mod.SUPER_REV, action = act.TogglePaneZoomState },
+    -- CMD+r: 切换当前窗格缩放 (放大/还原)
+    { key = 'r',    mods = mod.SUPER, action = act.TogglePaneZoomState },
     -- CMD+w: 关闭当前窗格 (不确认)
     { key = 'w',        mods = mod.SUPER,     action = act.CloseCurrentPane({ confirm = false }) },
 
@@ -246,7 +249,7 @@ local mouse_bindings = {
 ---@type Config
 return {
     disable_default_key_bindings = true,
-    -- disable_default_mouse_bindings = true,
+    disable_default_mouse_bindings = true,
     -- F12 为 Leader 键，用于激活子模式 (key-tables)
     leader = { key = 'F12', mods = 'NONE', timeout_milliseconds = 2000 },
     keys = keys,

@@ -59,7 +59,7 @@ return {
         -- font = fonts.font,
         -- font_size = fonts.font_size,
     },
-    inactive_pane_hsb = { saturation = 1, brightness = 1 },
+    -- inactive_pane_hsb = { saturation = 1, brightness = 1 },
     visual_bell = {
         fade_in_function = 'EaseIn',
         fade_in_duration_ms = 250,
