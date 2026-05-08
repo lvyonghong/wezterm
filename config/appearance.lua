@@ -16,7 +16,7 @@ return {
     animation_fps = 120,
     cursor_blink_ease_in = 'EaseOut',
     cursor_blink_ease_out = 'EaseOut',
-    default_cursor_style = 'BlinkingBlock',
+    default_cursor_style = 'BlinkingBar',
     cursor_blink_rate = 650,
 
     -- color scheme
@@ -67,6 +67,14 @@ return {
         saturation = 1,
         brightness = 1,
     },
+
+
+    --  config.cursor_blink_ease_in = "EaseOut"
+    -- config.cursor_blink_ease_out = "EaseOut"
+    -- config.default_cursor_style = "BlinkingBar"
+    -- config.cursor_blink_rate = 650
+    -- config.underline_thickness = "1pt"
+    -- config.inactive_pane_hsb = { saturation = 1, brightness = 1 }
 
     visual_bell = {
         fade_in_function = 'EaseIn',
