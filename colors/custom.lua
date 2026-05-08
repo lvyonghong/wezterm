@@ -86,7 +86,7 @@ local colorscheme = {
         [16] = mocha.peach,
         [17] = mocha.rosewater,
     },
-    scrollbar_thumb = mocha.surface2,
+    scrollbar_thumb = mocha.sky,
     split = mocha.overlay0,
     compose_cursor = mocha.flamingo,
 }

@@ -59,23 +59,7 @@ return {
         -- font = fonts.font,
         -- font_size = fonts.font_size,
     },
-    -- inactive_pane_hsb = {
-    --    saturation = 0.9,
-    --    brightness = 0.65,
-    -- },
-    inactive_pane_hsb = {
-        saturation = 1,
-        brightness = 1,
-    },
-
-
-    --  config.cursor_blink_ease_in = "EaseOut"
-    -- config.cursor_blink_ease_out = "EaseOut"
-    -- config.default_cursor_style = "BlinkingBar"
-    -- config.cursor_blink_rate = 650
-    -- config.underline_thickness = "1pt"
-    -- config.inactive_pane_hsb = { saturation = 1, brightness = 1 }
-
+    inactive_pane_hsb = { saturation = 1, brightness = 1 },
     visual_bell = {
         fade_in_function = 'EaseIn',
         fade_in_duration_ms = 250,
