@@ -1,15 +1,10 @@
 local wezterm = require('wezterm')
-local platform = require('utils.platform')
 
----Backend options available based for the platforms.
----Higher the score, the better the backend (I think 🤷).
+---Backend options available on macOS.
+---Higher the score, the better the backend.
 ---See `https://github.com/gfx-rs/wgpu#supported-platforms` for more info on available backends
 -- stylua: ignore
-local AVAILABLE_BACKENDS = {
-    windows = { Dx12 = 3, Vulkan = 2, Gl = 1 },
-    linux   = { Vulkan = 2, Gl = 1 },
-    mac     = { Metal = 1 },
-}
+local AVAILABLE_BACKENDS = { Metal = 1 }
 
 ---Device type options available.
 ---Higher the score, the better the device type.
@@ -29,7 +24,7 @@ local ENUMERATED_GPUS = wezterm.gui.enumerate_gpus()
 ---@field best number
 local GpuAdapters = {}
 GpuAdapters.__index = GpuAdapters
-GpuAdapters.backends = AVAILABLE_BACKENDS[platform.os]
+GpuAdapters.backends = AVAILABLE_BACKENDS
 GpuAdapters.device_types = AVAILABLE_DEVICE_TYPES
 
 ---@return GpuAdapters
@@ -43,24 +38,23 @@ function GpuAdapters:init()
     -- iterate over the enumerated GPUs and create a `scoreboard` look-up-table
     -- where higher the score, the better the adapter
     for _, adapter in ipairs(ENUMERATED_GPUS) do
-        local score = self.backends[adapter.backend]| self.device_types[adapter.device_type]
-        if score > initial.best then
-            initial.best = score
+        local backend_score = self.backends[adapter.backend]
+        local device_score = self.device_types[adapter.device_type]
+        if backend_score and device_score then
+            local score = backend_score + device_score
+            if score > initial.best then
+                initial.best = score
+            end
+            initial.scoreboard[score] = adapter
         end
-        initial.scoreboard[score] = adapter
     end
 
     return setmetatable(initial, self)
 end
 
 ---Will pick the best adapter based on the following criteria:
----   1. Best GPU available (Discrete > Integrated > Other (for wgpu's OpenGl implementation on Discrete GPU) > Cpu)
----   2. Best graphics API available (based off my very scientific scroll a big log file in neovim test 😁)
----
----Graphics API choices are based on the platform:
----   - Windows: Dx12 > Vulkan > OpenGl
----   - Linux: Vulkan > OpenGl
----   - Mac: Metal
+---   1. Best GPU available (Discrete > Integrated > Other > Cpu)
+---   2. Best graphics API available (Mac: Metal)
 ---
 ---@see AVAILABLE_BACKENDS
 ---
@@ -86,7 +80,7 @@ function GpuAdapters:pick_manual(backend, device_type)
     assert(backend_score, 'Invalid backend provided')
     assert(device_type_score, 'Invalid device type provided')
 
-    local score = backend_score | device_type_score
+    local score = backend_score + device_type_score
     local adapter_choice = self.scoreboard[score]
 
     if not adapter_choice then

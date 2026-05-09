@@ -24,8 +24,6 @@ local M = {}
 
 local ICON_SEPARATOR = nf.oct_dash
 local ICON_CPU = nf.md_chip
-local ICON_HOSTNAME = nf.md_monitor
-local ICON_DOMAIN = nf.md_earth
 local ICON_DATE = nf.fa_calendar
 
 ---@type string[]
@@ -59,8 +57,6 @@ local charging_icons = {
 -- stylua: ignore
 local colors = {
     cpu       = { fg = '#94e2d5' },
-    hostname  = { fg = '#a6e3a1' },
-    domain    = { fg = '#cba6f7' },
     date      = { fg = '#fab387' },
     battery   = { fg = '#f9e2af' },
     separator = { fg = '#74c7ec' },
@@ -72,21 +68,24 @@ cells
     :add_segment('cpu_icon', ICON_CPU .. '  ', colors.cpu, attr(attr.intensity('Bold')))
     :add_segment('cpu_text', '', colors.cpu, attr(attr.intensity('Bold')))
     :add_segment('sep_cpu', ' ' .. ICON_SEPARATOR .. '  ', colors.separator)
-    :add_segment('hostname_icon', ICON_HOSTNAME .. '  ', colors.hostname, attr(attr.intensity('Bold')))
-    :add_segment('hostname_text', '', colors.hostname, attr(attr.intensity('Bold')))
-    :add_segment('sep_host', ' ' .. ICON_SEPARATOR .. '  ', colors.separator)
-    :add_segment('domain_icon', ICON_DOMAIN .. '  ', colors.domain, attr(attr.intensity('Bold')))
-    :add_segment('domain_text', '', colors.domain, attr(attr.intensity('Bold')))
-    :add_segment('sep_domain', ' ' .. ICON_SEPARATOR .. '  ', colors.separator)
     :add_segment('date_icon', ICON_DATE .. '  ', colors.date, attr(attr.intensity('Bold')))
     :add_segment('date_text', '', colors.date, attr(attr.intensity('Bold')))
     :add_segment('separator', ' ' .. ICON_SEPARATOR .. '  ', colors.separator)
     :add_segment('battery_icon', '', colors.battery)
     :add_segment('battery_text', '', colors.battery, attr(attr.intensity('Bold')))
 
+local battery_cache = { t = 0, charge = '', icon = '' }
+local CPU_TTL = 1
+local BATTERY_TTL = 5
+
 ---@return string, string
 local function battery_info()
     -- ref: https://wezfurlong.org/wezterm/config/lua/wezterm/battery_info.html
+
+    local now = os.time()
+    if now - battery_cache.t < BATTERY_TTL then
+        return battery_cache.charge, battery_cache.icon
+    end
 
     local charge = ''
     local icon = ''
@@ -102,18 +101,26 @@ local function battery_info()
         end
     end
 
-    return charge, icon .. ' '
+    battery_cache.t = now
+    battery_cache.charge = charge
+    battery_cache.icon = icon .. ' '
+    return battery_cache.charge, battery_cache.icon
 end
+
+local cpu_cache = { t = 0, v = 'N/A ' }
 
 -- 1-minute load average via sysctl (macOS)
 ---@return string
 local function cpu_load()
-    local success, stdout, _ = wezterm.run_child_process({ 'sysctl', '-n', 'vm.loadavg' })
-    if not success then
-        return 'N/A'
+    local now = os.time()
+    if now - cpu_cache.t < CPU_TTL then
+        return cpu_cache.v
     end
-    local load = stdout:match('{ ([%d.]+) ')
-    return (load or 'N/A') .. ' '
+    local success, stdout, _ = wezterm.run_child_process({ 'sysctl', '-n', 'vm.loadavg' })
+    local load = success and stdout:match('{ ([%d.]+) ') or nil
+    cpu_cache.v = (load or 'N/A') .. ' '
+    cpu_cache.t = now
+    return cpu_cache.v
 end
 
 ---@param opts? Event.RightStatusOptionsInput Default: {date_format = '%a %H:%M:%S'}
@@ -128,14 +135,10 @@ M.setup = function(opts)
 
     wezterm.on('update-status', function(window, _pane)
         local cpu = cpu_load()
-        local hostname = wezterm.hostname()
-        local domain = window:active_pane():get_domain_name()
         local battery_text, battery_icon = battery_info()
 
         cells
             :update_segment_text('cpu_text', cpu)
-            :update_segment_text('hostname_text', hostname)
-            :update_segment_text('domain_text', domain)
             :update_segment_text('date_text', wezterm.strftime(valid_opts.date_format))
             :update_segment_text('battery_icon', battery_icon)
             :update_segment_text('battery_text', battery_text)
@@ -144,8 +147,6 @@ M.setup = function(opts)
             wezterm.format(
                 cells:render({
                     'cpu_icon', 'cpu_text', 'sep_cpu',
-                    'hostname_icon', 'hostname_text', 'sep_host',
-                    'domain_icon', 'domain_text', 'sep_domain',
                     'date_icon', 'date_text',
                     'separator', 'battery_icon', 'battery_text',
                 })

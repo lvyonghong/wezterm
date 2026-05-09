@@ -74,7 +74,7 @@ local ICON_PREFIX = {
 
 ---@enum UnseenOutputIcon
 local ICON_UNSEEN = {
-    cirlce = nf.fa_circle, --[[  ]]
+    circle = nf.fa_circle, --[[  ]]
 
     numbered_box_1 = nf.md_numeric_1_box_multiple, --[[ 󰼏 ]]
     numbered_box_2 = nf.md_numeric_2_box_multiple, --[[ 󰼐 ]]
@@ -546,7 +546,8 @@ M.setup = function(opts)
 
     ---@cast valid_opts Event.TabTitleOptions
 
-    if tonumber(wezterm.version:sub(1, 8)) < PROGRESS_MIN_VERSION then
+    local version_date = tonumber(wezterm.version:match('^(%d+)') or '0') or 0
+    if version_date < PROGRESS_MIN_VERSION then
         valid_opts.show_progress = false
     end
 

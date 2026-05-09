@@ -30,15 +30,13 @@ M.setup = function()
         local name = window:active_key_table()
         local res = {}
 
-        if name then
+        if window:leader_is_active() then
+            cells:update_segment_text(2, GLYPH_KEY):update_segment_text(3, ' ')
+            res = cells:render_all()
+        elseif name then
             cells
                 :update_segment_text(2, GLYPH_KEY_TABLE)
                 :update_segment_text(3, ' ' .. string.upper(name))
-            res = cells:render_all()
-        end
-
-        if window:leader_is_active() then
-            cells:update_segment_text(2, GLYPH_KEY):update_segment_text(3, ' ')
             res = cells:render_all()
         end
         window:set_left_status(wezterm.format(res))
