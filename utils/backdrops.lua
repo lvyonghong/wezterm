@@ -175,7 +175,7 @@ end
 ---@param window Window WezTerm `Window` see: https://wezfurlong.org/wezterm/config/lua/window/index.html
 ---@param idx number index of the `files` array
 function BackDrops:set_img(window, idx)
-    if idx > #self.images or idx < 0 then
+    if idx > #self.images or idx < 1 then
         wezterm.log_error('Index out of range')
         return
     end
