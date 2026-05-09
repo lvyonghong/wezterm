@@ -25,7 +25,7 @@ local keys = {
     { key = 'F3',    mods = 'NONE',    action = act.ShowLauncher },
     -- 切换全屏
     { key = 'Enter', mods = mod.SUPER, action = act.ToggleFullScreen },
-    -- 显示调试叠加层 | 同时作为 Leader 键
+    -- CMD+F12: 显示调试叠加层（注意：不带 mods 的 F12 是 Leader 键，见底部 leader 配置）
     { key = 'F12',   mods = mod.SUPER, action = act.ShowDebugOverlay },
     -- CMD+f: 搜索文本 (大小写不敏感)
     { key = 'f',     mods = mod.SUPER, action = act.Search({ CaseInSensitiveString = '' }) },
@@ -48,7 +48,7 @@ local keys = {
     {
         key = 'u',
         mods = mod.SUPER_REV,
-        action = wezterm.action.QuickSelectArgs({
+        action = act.QuickSelectArgs({
             label = 'open url',
             patterns = {
                 '\\((https?://\\S+)\\)',
@@ -162,9 +162,7 @@ local keys = {
     -- CMD+CTRL+\: 水平分割当前窗格
     { key = [[\]],      mods = mod.SUPER_REV, action = act.SplitHorizontal({ domain = 'CurrentPaneDomain' }) },
 
-    -- panes: zoom+close pane
-    -- CMD+r: 切换当前窗格缩放 (放大/还原)
-    { key = 'r',        mods = mod.SUPER,     action = act.TogglePaneZoomState },
+    -- panes: close pane
     -- CMD+w: 关闭当前窗格 (不确认)
     { key = 'w',        mods = mod.SUPER,     action = act.CloseCurrentPane({ confirm = false }) },
 
@@ -202,17 +200,6 @@ local keys = {
             timeout_milliseconds = 2000,
         }),
     },
-    -- resize panes
-    -- F12, p: 进入窗格大小调整模式
-    {
-        key = 'p',
-        mods = 'LEADER',
-        action = act.ActivateKeyTable({
-            name = 'resize_pane',
-            one_shot = false,
-            timeout_milliseconds = 2000,
-        }),
-    },
 }
 
 -- stylua: ignore
@@ -224,14 +211,6 @@ local key_tables = {
         { key = 'r',      action = act.ResetFontSize },    -- 重置字号为默认
         { key = 'Escape', action = 'PopKeyTable' },        -- 手动退出 (1s 无操作也会自动退出)
         { key = 'q',      action = 'PopKeyTable' },        -- 手动退出 (1s 无操作也会自动退出)
-    },
-    resize_pane = {
-        { key = 'k',      action = act.AdjustPaneSize({ 'Up', 1 }) },    -- 向上拖动窗格分割线
-        { key = 'j',      action = act.AdjustPaneSize({ 'Down', 1 }) },  -- 向下拖动窗格分割线
-        { key = 'h',      action = act.AdjustPaneSize({ 'Left', 1 }) },  -- 向左拖动窗格分割线
-        { key = 'l',      action = act.AdjustPaneSize({ 'Right', 1 }) }, -- 向右拖动窗格分割线
-        { key = 'Escape', action = 'PopKeyTable' },                      -- 手动退出 (1s 无操作也会自动退出)
-        { key = 'q',      action = 'PopKeyTable' },                      -- 手动退出 (1s 无操作也会自动退出)
     },
 }
 
