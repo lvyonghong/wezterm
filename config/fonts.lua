@@ -1,14 +1,16 @@
 local wezterm = require('wezterm')
-local platform = require('utils.platform')
 
 ---@type Config
 return {
     font = wezterm.font_with_fallback {
         { family = 'JetBrainsMono Nerd Font Mono' },
         { family = 'JetBrainsMono Nerd Font' },
+        -- 简体中文：避免系统回退挑到繁体/日文字形（CJK 统一码字形差异）
+        { family = 'PingFang SC' },
+        { family = 'Hiragino Sans GB' },
         'Noto Color Emoji',
     },
-    font_size = platform.is_mac and 13.5 or 14,
+    font_size = 13.5,
     line_height = 1.3,
     allow_square_glyphs_to_overflow_width = "WhenFollowedBySpace",
 
