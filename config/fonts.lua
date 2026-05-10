@@ -14,6 +14,9 @@ return {
     line_height = 1.3,
     allow_square_glyphs_to_overflow_width = "WhenFollowedBySpace",
 
+    -- 关掉 JetBrainsMono 的连字（== != => 不再合体），终端列宽更稳
+    harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
+
     --ref: https://wezfurlong.org/wezterm/config/lua/config/freetype_pcf_long_family_names.html#why-doesnt-wezterm-use-the-distro-freetype-or-match-its-configuration
     freetype_load_target = 'Normal', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'
     freetype_render_target = 'Normal', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'

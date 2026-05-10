@@ -65,6 +65,8 @@ function BackDrops:_gen_opts()
         table.insert(bg_opts, {
             source = { File = self.images[self.current_idx] },
             horizontal_align = 'Center',
+            -- 壁纸压暗，文字对比度优先；不动饱和度/色相
+            hsb = { brightness = 0.4, hue = 1.0, saturation = 1.0 },
         })
     end
 

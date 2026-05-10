@@ -30,11 +30,18 @@ cells
 local CPU_TTL = 1
 local MEM_TTL = 2
 
--- 总物理内存（字节）启动时取一次，运行时不变
-local TOTAL_MEM = (function()
+-- 总物理内存（字节）懒加载：首次调用时取一次。
+-- 不能在模块加载阶段 spawn（wezterm 初始 config 评估禁止 run_child_process，
+-- 否则报 "attempt to yield across a C-call boundary"）。
+local TOTAL_MEM = nil
+local function get_total_mem()
+    if TOTAL_MEM ~= nil then
+        return TOTAL_MEM
+    end
     local ok, out = wezterm.run_child_process({ 'sysctl', '-n', 'hw.memsize' })
-    return ok and tonumber((out:match('%d+'))) or 0
-end)()
+    TOTAL_MEM = ok and tonumber((out:match('%d+'))) or 0
+    return TOTAL_MEM
+end
 
 local cpu_cache = { t = 0, v = 'N/A ' }
 
@@ -61,7 +68,8 @@ local function mem_usage()
     if now - mem_cache.t < MEM_TTL then
         return mem_cache.v
     end
-    if TOTAL_MEM == 0 then
+    local total = get_total_mem()
+    if total == 0 then
         return 'N/A '
     end
     local ok, out = wezterm.run_child_process({ 'vm_stat' })
@@ -72,7 +80,7 @@ local function mem_usage()
     local free = tonumber(out:match('Pages free:%s+(%d+)')) or 0
     local inactive = tonumber(out:match('Pages inactive:%s+(%d+)')) or 0
     local available = (free + inactive) * page_size
-    local pct = math.floor((1 - available / TOTAL_MEM) * 100 + 0.5)
+    local pct = math.floor((1 - available / total) * 100 + 0.5)
     mem_cache.v = string.format('%d%% ', pct)
     mem_cache.t = now
     return mem_cache.v

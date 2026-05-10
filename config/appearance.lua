@@ -18,6 +18,10 @@ return {
     default_cursor_style = 'BlinkingBar',
     cursor_blink_rate = 650,
 
+    -- 静止闪烁文本（CSI 5 / CSI 6 SGR），减少视觉干扰
+    text_blink_rate = 0,
+    text_blink_rate_rapid = 0,
+
     -- color scheme
     colors = colors,
 
@@ -51,6 +55,8 @@ return {
     adjust_window_size_when_changing_font_size = false,
     window_close_confirmation = 'NeverPrompt',
     window_decorations = 'RESIZE',
+    -- macOS 原生窗口背景毛玻璃，0~100，30 比较温和
+    macos_window_background_blur = 30,
     visual_bell = {
         fade_in_function = 'EaseIn',
         fade_in_duration_ms = 100,

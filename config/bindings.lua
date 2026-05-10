@@ -23,16 +23,13 @@ local keys = {
     { key = 'F12',   mods = mod.SUPER, action = act.ShowDebugOverlay },
     -- CMD+f: 搜索文本 (大小写不敏感)
     { key = 'f',     mods = mod.SUPER, action = act.Search({ CaseInSensitiveString = '' }) },
-    -- 清屏
+    -- 清屏（macOS 习惯的 CMD+k）
     {
-        key = 'r',
+        key = 'k',
         mods = mod.SUPER,
         action = act.Multiple {
             act.ClearScrollback 'ScrollbackAndViewport',
-            act.SendKey {
-                key = 'L',
-                mods = 'CTRL'
-            },
+            act.SendKey { key = 'L', mods = 'CTRL' },
         },
     },
     -- CMD + z 发送 Ctrl+_ 实现撤销
@@ -81,10 +78,9 @@ local keys = {
     { key = 'w',          mods = mod.SUPER_REV, action = act.CloseCurrentTab({ confirm = false }) },
 
     -- tabs: navigation
-    -- CMD+[: 切换到上一个标签页
-    { key = '[',          mods = mod.SUPER,     action = act.ActivateTabRelative(-1) },
-    -- CMD+]: 切换到下一个标签页
-    { key = ']',          mods = mod.SUPER,     action = act.ActivateTabRelative(1) },
+    -- CMD+Shift+[/]: Chrome/Safari 风格的 tab 切换别名
+    { key = '{',          mods = 'SUPER|SHIFT', action = act.ActivateTabRelative(-1) },
+    { key = '}',          mods = 'SUPER|SHIFT', action = act.ActivateTabRelative(1) },
     -- CMD+CTRL+[: 将当前标签页向左移动
     { key = '[',          mods = mod.SUPER_REV, action = act.MoveTabRelative(-1) },
     -- CMD+CTRL+]: 将当前标签页向右移动
@@ -223,7 +219,7 @@ local mouse_bindings = {
 return {
     disable_default_key_bindings = true,
     -- F12 为 Leader 键，用于激活子模式 (key-tables)
-    leader = { key = 'F12', mods = 'NONE', timeout_milliseconds = 2000 },
+    leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 2000 },
     keys = keys,
     key_tables = key_tables,
     mouse_bindings = mouse_bindings,
