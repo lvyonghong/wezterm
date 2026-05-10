@@ -63,8 +63,6 @@ local ICON_SCIRCLE_RIGHT = nf.ple_right_half_circle_thick --[[  ]]
 -- stylua: ignore
 ---@enum PrefixIcon
 local ICON_PREFIX = {
-    admin    = nf.md_shield_half_full, --[[ 󰞀 ]]
-    wsl      = nf.cod_terminal_linux, --[[  ]]
     debug    = nf.fa_bug, --[[  ]]
     select   = nf.md_selection_search, --[[ 󱈅 ]]
     --  search = '🔭',
@@ -202,15 +200,12 @@ end
 
 ---@param proc string
 local function clean_process_name(proc)
-    local a = string.gsub(proc, '.*[/\\](.*)', '%1')
-    return a:gsub('%.exe$', '')
+    return (proc:gsub('.*/(.*)', '%1'))
 end
 
----@generic T
 ---@param pane_title string
----@param process_name string
 ---@return string, PrefixIcon?
-local function create_base_title(pane_title, process_name)
+local function create_base_title(pane_title)
     ---@type PrefixIcon|nil
     local prefix_icon = nil
     local base_title = pane_title
@@ -224,17 +219,6 @@ local function create_base_title(pane_title, process_name)
     elseif base_title == 'Launcher' then
         prefix_icon = ICON_PREFIX.launcher
         base_title = base_title:upper()
-
-        -- if shell is elevated to windows administrator
-    elseif
-        ustr.starts_with(base_title, 'Administrator:') or ustr.ends_with(base_title, '(Admin)')
-    then
-        prefix_icon = ICON_PREFIX.admin
-        base_title = base_title:gsub('Administrator: ', ''):gsub('%(Admin%)', '')
-
-        -- if shell is wsl instance
-    elseif ustr.starts_with(process_name, 'wsl') then
-        prefix_icon = ICON_PREFIX.wsl
 
         -- if `PromptInputLine` or `InputSelector` overlay is active
     elseif ustr.starts_with(base_title, 'InputSelector:') then
@@ -272,7 +256,7 @@ local function create_title(process_name, base_title, max_width, inset)
     return title
 end
 
-local progress_stale = (function()
+local progress_stale, progress_stale_prune = (function()
     -- stylua: ignore
     local status_score = {
         indeterminate = 100,
@@ -280,44 +264,49 @@ local progress_stale = (function()
         percentage    = 300,
     }
 
-    ---@type {sum: integer, last_changed: integer}[]
+    ---@type table<integer, {sum: integer, last_changed: integer}>
     local entries = {}
 
     ---Mark progress value as stale if the output hasn't changed in 30 seconds
-    ---@param tab_index integer
-    ---@param pane_index integer
+    ---@param pane_id integer pane.pane_id (globally unique)
     ---@param status 'indeterminate'|'error'|'percentage'
     ---@param pct integer
     ---@return boolean `true` if stale
-    return function(tab_index, pane_index, status, pct)
-        -- shifting by 5 bits, assuming no more than 31 panes will be
-        -- spawned in a single tab
-        local entry_id = (tab_index << 5) | pane_index
-
-        if not entries[entry_id] then
-            entries[entry_id] = {}
-            entries[entry_id].sum = status_score[status] + pct
-            entries[entry_id].last_changed = os.time()
-            return false
-        end
-
+    local function check(pane_id, status, pct)
         local sum = status_score[status] + pct
+        local entry = entries[pane_id]
 
-        if sum ~= entries[entry_id].sum then
-            entries[entry_id].sum = sum
-            entries[entry_id].last_changed = os.time()
+        if not entry then
+            entries[pane_id] = { sum = sum, last_changed = os.time() }
             return false
         end
 
-        return os.time() - entries[entry_id].last_changed > PROGRESS_STALE_AFTER
+        if sum ~= entry.sum then
+            entry.sum = sum
+            entry.last_changed = os.time()
+            return false
+        end
+
+        return os.time() - entry.last_changed > PROGRESS_STALE_AFTER
     end
+
+    ---Prune entries for closed panes to prevent unbounded growth
+    ---@param live table<integer, boolean> set of live pane_ids
+    local function prune(live)
+        for id in pairs(entries) do
+            if not live[id] then
+                entries[id] = nil
+            end
+        end
+    end
+
+    return check, prune
 end)()
 
 ---@param options Event.TabTitleOptions
----@param tab_index integer
 ---@param panes PaneInformation[]
 ---@return {icon: string?, status: 'indeterminate'|'percentage'|'error'?}[]
-local function check_progress(options, tab_index, panes)
+local function check_progress(options, panes)
     if not options.show_progress then
         return {}
     end
@@ -347,7 +336,7 @@ local function check_progress(options, tab_index, panes)
         end
 
         if icon and status then
-            if not progress_stale(tab_index, pane.pane_index, status, pct) then
+            if not progress_stale(pane.pane_id, status, pct) then
                 table.insert(progress, { icon = icon, status = status })
             end
         end
@@ -449,9 +438,9 @@ function Tab:update_cells(event_opts, tab, hover, max_width)
     end
 
     local process_name = clean_process_name(tab.active_pane.foreground_process_name)
-    local base_title, prefix_icon = create_base_title(tab.active_pane.title, process_name)
+    local base_title, prefix_icon = create_base_title(tab.active_pane.title)
     local unseen_icon = check_unseen_output(event_opts, tab.is_active, tab.panes)
-    local progress = check_progress(event_opts, tab.tab_index, tab.panes)
+    local progress = check_progress(event_opts, tab.panes)
     local inset = TITLE_INSET.default
 
     -- Prefix icons
@@ -555,15 +544,8 @@ M.setup = function(opts)
     -- Event listener to manually update the tab name
     -- Tab name will remain locked until the `reset-tab-title` is triggered
     wezterm.on('tabs.manual-update-tab-title', function(window, pane)
-        local title = nil
-
-        if ustr.ends_with(wezterm.version, 'custom-build') then
-            title = 'InputLine: Manual Tab Title'
-        end
-
         window:perform_action(
             wezterm.action.PromptInputLine({
-                title = title,
                 description = wezterm.format({
                     { Foreground = { Color = '#FFFFFF' } },
                     { Attribute = { Intensity = 'Bold' } },
@@ -602,7 +584,23 @@ M.setup = function(opts)
     end)
 
     -- BUILTIN EVENT
-    wezterm.on('format-tab-title', function(tab, _tabs, _panes, _config, hover, max_width)
+    wezterm.on('format-tab-title', function(tab, tabs, _panes, _config, hover, max_width)
+        -- prune entries for closed tabs/panes to prevent unbounded growth
+        local live_tabs = {}
+        local live_panes = {}
+        for _, t in ipairs(tabs) do
+            live_tabs[t.tab_id] = true
+            for _, p in ipairs(t.panes) do
+                live_panes[p.pane_id] = true
+            end
+        end
+        for id in pairs(tab_list) do
+            if not live_tabs[id] then
+                tab_list[id] = nil
+            end
+        end
+        progress_stale_prune(live_panes)
+
         if not tab_list[tab.tab_id] then
             tab_list[tab.tab_id] = Tab:new()
         end

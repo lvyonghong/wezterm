@@ -1,13 +1,9 @@
 local wezterm = require('wezterm')
 local colors = require('colors.custom')
 
--- Seeding random numbers before generating for use
--- Known issue with lua math library
--- see: https://stackoverflow.com/questions/20154991/generating-uniform-random-numbers-in-lua
-math.randomseed(os.time())
-math.random()
-math.random()
-math.random()
+-- Lua 5.4 用 xoshiro256** PRNG，无需老的 burn-off。
+-- 第二参喂表地址做亚秒级混合，避免同一秒启动多窗口拿到同一张壁纸。
+math.randomseed(os.time(), tonumber(tostring({}):match('0x(%x+)'), 16) or 0)
 
 local GLOB_PATTERN = '*.{jpg,jpeg,png,gif,bmp,ico,tiff,pnm,dds,tga}'
 

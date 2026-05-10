@@ -236,7 +236,7 @@ end
 function Cells:extend_nested_segment(segment_id, items)
     self:_check_segment(segment_id)
     self:_check_nested(segment_id, true)
-    for _, item in pairs(items) do
+    for _, item in ipairs(items) do
         table.insert(self.segments[segment_id].nested_items, item)
     end
     return self
@@ -253,42 +253,17 @@ function Cells:render(ids)
         self:_check_segment(id)
 
         if self.segments[id].nested then
-            for _, nested in pairs(self.segments[id].nested_items) do
-                for _, item in pairs(nested) do
+            for _, nested in ipairs(self.segments[id].nested_items) do
+                for _, item in ipairs(nested) do
                     table.insert(cells, item)
                 end
             end
             goto continue
         end
 
-        for _, item in pairs(self.segments[id].items) do
+        for _, item in ipairs(self.segments[id].items) do
             table.insert(cells, item)
         end
-        ::continue::
-    end
-    return cells
-end
-
----Convert all segments into a format that `wezterm.format` can use
---- WARNING: Segments may not be in the same order as they were added if the `segment_id` is a string
----
----@return FormatItem[]
-function Cells:render_all()
-    local cells = {}
-    for _, segment in pairs(self.segments) do
-        if segment.nested then
-            for _, nested in pairs(segment.nested_items) do
-                for _, item in pairs(nested) do
-                    table.insert(cells, item)
-                end
-            end
-            goto continue
-        end
-
-        for _, item in pairs(segment.items) do
-            table.insert(cells, item)
-        end
-
         ::continue::
     end
     return cells

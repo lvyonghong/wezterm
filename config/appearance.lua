@@ -51,11 +51,6 @@ return {
     adjust_window_size_when_changing_font_size = false,
     window_close_confirmation = 'NeverPrompt',
     window_decorations = 'RESIZE',
-    enable_wayland = false,
-    window_frame = {
-        active_titlebar_bg = 'FFEB9604',
-        border_bottom_height = '0.5cell',
-    },
     visual_bell = {
         fade_in_function = 'EaseIn',
         fade_in_duration_ms = 100,

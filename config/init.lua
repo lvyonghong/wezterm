@@ -19,13 +19,16 @@ function Config:append(new_options)
     for k, v in pairs(new_options) do
         if self.options[k] ~= nil then
             wezterm.log_warn(
-                'Duplicate config option detected: ',
-                { old = self.options[k], new = new_options[k] }
+                string.format(
+                    'Duplicate config option %q: old=%s new=%s',
+                    tostring(k),
+                    tostring(self.options[k]),
+                    tostring(v)
+                )
             )
-            goto continue
+        else
+            self.options[k] = v
         end
-        self.options[k] = v
-        ::continue::
     end
     return self
 end
