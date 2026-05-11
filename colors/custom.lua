@@ -38,7 +38,7 @@ local colorscheme = {
     selection_bg = mocha.surface2,
     selection_fg = mocha.text,
     ansi = {
-        '#0C0C0C',  -- black
+        '#181825',  -- black
         'FFFA3E4E', -- red
         '#13A10E',  -- green
         '#C19C00',  -- yellow
@@ -60,8 +60,8 @@ local colorscheme = {
     tab_bar = {
         background = 'rgba(0, 0, 0, 0)',
         active_tab = {
-            bg_color = mocha.surface2,
-            fg_color = mocha.text,
+            bg_color = mocha.lavender,
+            fg_color = mocha.crust,
         },
         inactive_tab = {
             bg_color = mocha.surface0,
@@ -86,7 +86,7 @@ local colorscheme = {
         [16] = mocha.peach,
         [17] = mocha.rosewater,
     },
-    scrollbar_thumb = mocha.sky,
+    scrollbar_thumb = mocha.overlay0,
     split = mocha.overlay0,
     compose_cursor = mocha.flamingo,
 }
