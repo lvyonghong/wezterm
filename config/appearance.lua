@@ -35,10 +35,10 @@ return {
 
     -- tab bar
     enable_tab_bar = true,
-    hide_tab_bar_if_only_one_tab = false,
+    hide_tab_bar_if_only_one_tab = true,
     use_fancy_tab_bar = false,
     tab_bar_at_bottom = true,
-    tab_max_width = 48,
+    tab_max_width = 40,
     show_tab_index_in_tab_bar = false,
     switch_to_last_active_tab_when_closing_tab = true,
 
@@ -54,7 +54,7 @@ return {
         inactive_titlebar_bg = '#11111b',
         border_left_width = '0.5pt',
         border_right_width = '0.5pt',
-        border_bottom_width = '0.5pt',
+        border_bottom_height = '0.5pt',
     },
     window_padding = {
         left = '1cell',
@@ -67,8 +67,8 @@ return {
     alternate_buffer_wheel_scroll_speed = 3,
     window_close_confirmation = 'NeverPrompt',
     window_decorations = 'RESIZE',
-    -- macOS 原生窗口背景毛玻璃，0~100，20 比较温和
-    macos_window_background_blur = 20,
+    -- macOS 原生窗口背景毛玻璃，0~100，30 比较温和
+    macos_window_background_blur = 30,
     visual_bell = {
         fade_in_function = 'EaseIn',
         fade_in_duration_ms = 100,

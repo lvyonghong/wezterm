@@ -25,9 +25,6 @@ return {
     -- macOS 中文输入法（搜狗/微信/系统拼音）需要 IME 通道
     use_ime = true,
 
-    -- CJK 模糊宽度字符按宽字符(2格)处理，避免中文终端/TUI 排版错乱
-    treat_east_asian_ambiguous_width_as_wide = true,
-
     -- zoom 后切 pane 自动解除 zoom，避免误进入孤立大窗格
     unzoom_on_switch_pane = true,
 
