@@ -157,27 +157,27 @@ local RV = {
 local colors = {
     text_default                   = { bg = '#6c7086', fg = '#1C1B19' },
     text_hover                     = { bg = '#7188b0', fg = '#1C1B19' },
-    text_active                    = { bg = '#74c7ec', fg = '#11111B' },
+    text_active                    = { bg = '#b4befe', fg = '#11111b' },
 
     unseen_output_default          = { bg = '#6c7086', fg = '#FFA066' },
     unseen_output_hover            = { bg = '#7188b0', fg = '#FFA066' },
-    unseen_output_active           = { bg = '#74c7ec', fg = '#FFA066' },
+    unseen_output_active           = { bg = '#b4befe', fg = '#FFA066' },
 
     scircle_default                = { bg = 'rgba(0, 0, 0, 0.4)', fg = '#6c7086' },
     scircle_hover                  = { bg = 'rgba(0, 0, 0, 0.4)', fg = '#7188b0' },
-    scircle_active                 = { bg = 'rgba(0, 0, 0, 0.4)', fg = '#74c7ec' },
+    scircle_active                 = { bg = 'rgba(0, 0, 0, 0.4)', fg = '#b4befe' },
 
     progress_percentage_default    = { bg = '#6c7086', fg = '#9df296' },
     progress_percentage_hover      = { bg = '#7188b0', fg = '#9df296' },
-    progress_percentage_active     = { bg = '#74c7ec', fg = '#9df296' },
+    progress_percentage_active     = { bg = '#b4befe', fg = '#9df296' },
 
     progress_error_default         = { bg = '#6c7086', fg = '#fa3970' },
     progress_error_hover           = { bg = '#7188b0', fg = '#fa3970' },
-    progress_error_active          = { bg = '#74c7ec', fg = '#fa3970' },
+    progress_error_active          = { bg = '#b4befe', fg = '#fa3970' },
 
     progress_indeterminate_default = { bg = '#6c7086', fg = '#f5e0dc' },
     progress_indeterminate_hover   = { bg = '#7188b0', fg = '#f5e0dc' },
-    progress_indeterminate_active  = { bg = '#74c7ec', fg = '#f5e0dc' },
+    progress_indeterminate_active  = { bg = '#b4befe', fg = '#f5e0dc' },
 }
 
 ---

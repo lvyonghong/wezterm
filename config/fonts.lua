@@ -6,8 +6,8 @@ return {
         { family = 'JetBrainsMono Nerd Font Mono' },
         { family = 'JetBrainsMono Nerd Font' },
         -- 简体中文：避免系统回退挑到繁体/日文字形（CJK 统一码字形差异）
-        { family = 'PingFang SC' },
-        { family = 'Hiragino Sans GB' },
+        { family = 'PingFang SC', weight = 'Regular' },
+        { family = 'Hiragino Sans GB', weight = 'Regular' },
         'Noto Color Emoji',
     },
     font_size = 13.5,
@@ -18,6 +18,6 @@ return {
     harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
 
     --ref: https://wezfurlong.org/wezterm/config/lua/config/freetype_pcf_long_family_names.html#why-doesnt-wezterm-use-the-distro-freetype-or-match-its-configuration
-    freetype_load_target = 'Normal', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'
-    freetype_render_target = 'Normal', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'
+    freetype_load_target = 'Light', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'
+    freetype_render_target = 'Light', ---@type 'Normal'|'Light'|'Mono'|'HorizontalLcd'
 }
