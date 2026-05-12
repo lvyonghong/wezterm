@@ -6,7 +6,7 @@ return {
     -- 自动重载配置
     automatically_reload_config = true,
     -- 退出行为
-    exit_behavior = 'CloseOnCleanExit',
+    exit_behavior = 'Close',
     exit_behavior_messaging = 'Verbose',
     -- 状态更新间隔
     status_update_interval = 5000,
