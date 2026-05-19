@@ -219,7 +219,7 @@ local mouse_bindings = {
 return {
     disable_default_key_bindings = true,
     -- F12 为 Leader 键，用于激活子模式 (key-tables)
-    leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 2000 },
+    leader = { key = [[\]], mods = 'NONE', timeout_milliseconds = 2000 },
     keys = keys,
     key_tables = key_tables,
     mouse_bindings = mouse_bindings,
