@@ -19,7 +19,7 @@ local keys = {
     { key = 'F3',    mods = 'NONE',    action = act.ShowLauncher },
     -- 切换全屏
     { key = 'Enter', mods = mod.SUPER, action = act.ToggleFullScreen },
-    -- CMD+F12: 显示调试叠加层（注意：不带 mods 的 F12 是 Leader 键，见底部 leader 配置）
+    -- CMD+F12: 显示调试叠加层
     { key = 'F12',   mods = mod.SUPER, action = act.ShowDebugOverlay },
     -- CMD+f: 搜索文本 (大小写不敏感)
     { key = 'f',     mods = mod.SUPER, action = act.Search({ CaseInSensitiveString = '' }) },
@@ -178,14 +178,23 @@ local keys = {
     -- PageDown: 向下翻页
     { key = 'PageDown', mods = 'NONE',        action = act.ScrollByPage(0.75) },
 
-    -- key-tables (通过 Leader 键 F12 激活的子模式) --
-    -- resizes fonts
-    -- F12, f: 进入字体缩放模式
+    -- key-tables (通过 Leader 键 激活的子模式) --
+    -- resizes fonts 进入字体缩放模式
     {
         key = 'f',
         mods = 'LEADER',
         action = act.ActivateKeyTable({
             name = 'resize_font',
+            one_shot = false,
+            timeout_milliseconds = 2000,
+        }),
+    },
+    -- resizes panes 进入窗格大小调整模式
+    {
+        key = 'p',
+        mods = 'LEADER',
+        action = act.ActivateKeyTable({
+            name = 'resize_pane',
             one_shot = false,
             timeout_milliseconds = 2000,
         }),
@@ -200,7 +209,13 @@ local key_tables = {
         { key = 'j',      action = act.DecreaseFontSize }, -- 减小字号
         { key = 'r',      action = act.ResetFontSize },    -- 重置字号为默认
         { key = 'Escape', action = 'PopKeyTable' },        -- 手动退出 (1s 无操作也会自动退出)
-        { key = 'q',      action = 'PopKeyTable' },        -- 手动退出 (1s 无操作也会自动退出)
+    },
+    resize_pane = {
+        { key = 'k',      action = act.AdjustPaneSize({ 'Up', 1 }) },    -- 向上调整窗格大小
+        { key = 'j',      action = act.AdjustPaneSize({ 'Down', 1 }) },  -- 向下调整窗格大小
+        { key = 'h',      action = act.AdjustPaneSize({ 'Left', 1 }) },  -- 向左调整窗格大小
+        { key = 'l',      action = act.AdjustPaneSize({ 'Right', 1 }) }, -- 向右调整窗格大小
+        { key = 'Escape', action = 'PopKeyTable' },                      -- 手动退出 (1s 无操作也会自动退出)
     },
 }
 
@@ -218,8 +233,8 @@ local mouse_bindings = {
 ---@type Config
 return {
     disable_default_key_bindings = true,
-    -- F12 为 Leader 键，用于激活子模式 (key-tables)
-    leader = { key = [[\]], mods = 'NONE', timeout_milliseconds = 2000 },
+    -- CMD + \ 为 Leader 键，用于激活子模式 (key-tables)
+    leader = { key = [[\]], mods = mod.SUPER, timeout_milliseconds = 2000 },
     keys = keys,
     key_tables = key_tables,
     mouse_bindings = mouse_bindings,
