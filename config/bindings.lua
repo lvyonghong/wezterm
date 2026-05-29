@@ -234,7 +234,7 @@ local mouse_bindings = {
 return {
     disable_default_key_bindings = true,
     -- CMD + \ 为 Leader 键，用于激活子模式 (key-tables)
-    leader = { key = [[\]], mods = mod.SUPER, timeout_milliseconds = 2000 },
+    leader = { key = [[\]], mods = 'SUPER|SHIFT', timeout_milliseconds = 2000 },
     keys = keys,
     key_tables = key_tables,
     mouse_bindings = mouse_bindings,
